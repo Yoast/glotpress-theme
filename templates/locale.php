@@ -31,11 +31,16 @@ if ( empty( $projects_data ) ) {
 			foreach ( $results as $result ) {
 				$overall_stats[ $result->status ] = $result->number;
 			}
+			foreach( array( 'current', 'fuzzy', 'untranslated', 'waiting' ) as $status ) {
+				if ( ! isset( $overall_stats[$status] ) ) {
+					$overall_stats[$status] = 0;
+				}
+			}
 			$overall_stats[ 'untranslated' ] = $gpdb->get_var( sprintf( "SELECT COUNT(id) AS total FROM gp_originals WHERE status = '+active' AND project_id IN ( SELECT project_id FROM gp_translation_sets WHERE locale = '%s' )", $locale->slug ) ) - $overall_stats['current'];
 			?>
 			<tr>
 				<td class="stats translated"><?php echo $overall_stats['current']; ?></td>
-				<td class="stats fuzzy"><?php echo '&nbsp;'; ?></td>
+				<td class="stats fuzzy"><?php echo $overall_stats['fuzzy']; ?></td>
 				<td class="stats untranslated"><?php echo $overall_stats['untranslated']; ?></td>
 				<td class="stats waiting"><?php echo $overall_stats['waiting']; ?></td>
 			</tr>
